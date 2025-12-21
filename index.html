@@ -239,7 +239,7 @@
 
         listToPrint.forEach((d, index) => {
             let rawNo = currentSeq !== null ? currentSeq : (d['NO.'] || d['NO'] || d['No.'] || "0000");
-            const noIjazah = `I . ${hY} . 02.30 . E . ${String(rawNo).padStart(4, '0')}`;
+            const noIjazah = `E . ${hY} . 02.30 . VII . ${String(rawNo).padStart(4, '0')}`;
             let waliName = (d['NAMA AYAH'] && d['NAMA AYAH'] !== "-") ? d['NAMA AYAH'] : d['NAMA IBU'];
             const capWali = waliName.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
             const idDrive = (d['IMAGE'] || d['FOTO'] || "").includes('id=') ? (d['IMAGE'] || d['FOTO']).match(/id=([a-zA-Z0-9_-]+)/)[1] : null;
