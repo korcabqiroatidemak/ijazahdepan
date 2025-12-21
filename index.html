@@ -2,9 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>IJAZAH EBTAQ - Skrip 003 v16 Final</title>
+    <title>IJAZAH EBTAQ - Skrip 003 v17 Final</title>
     <style>
-        @page { size: 210mm 330mm; margin: 0; }
+        /* Ukuran Kertas F4 (215mm x 330mm) */
+        @page { size: 215mm 330mm; margin: 0; }
         body { 
             margin: 0; padding: 0; background-color: #525659; 
             font-family: "Times New Roman", serif; 
@@ -14,9 +15,9 @@
 
         /* ================= PANEL KONTROL ================= */
         .control-panel {
-            background: #fff; width: 210mm; margin: 20px auto;
+            background: #fff; width: 215mm; margin: 20px auto;
             padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: block;
+            display: block; box-sizing: border-box;
         }
         .control-panel h3 { margin: 0 0 15px; color: #007bff; font-family: Arial; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .row { display: flex; gap: 15px; margin-bottom: 15px; }
@@ -27,9 +28,9 @@
         .verify-box { background: #fdfdfd; border: 2px solid #007bff; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
         .btn-gen { width: 100%; padding: 15px; background: #28a745; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 16px; }
 
-        /* ================= KANVAS  ================= */
+        /* ================= KANVAS IJAZAH ================= */
         .page-canvas {
-            width: 210mm; height: 330mm; margin: 10mm auto;
+            width: 215mm; height: 330mm; margin: 10mm auto;
             background-color: white; position: relative;
             box-sizing: border-box; overflow: hidden;
             page-break-after: always;
@@ -50,17 +51,15 @@
 
         /* HEADER */
         .title-ijazah { 
-    font-size: 28pt; 
-    font-weight: bold; 
-    letter-spacing: 15px; 
-    text-indent: 15px; /* Ini "obatnya" agar kembali ke tengah */
-    text-transform: uppercase; 
-    margin: 10px 0 5px 0; 
-}
+            font-size: 28pt; font-weight: bold; 
+            letter-spacing: 15px; 
+            text-indent: 15px; /* Obat agar teks tepat di tengah */
+            text-transform: uppercase; 
+            margin-bottom: 5px; 
+        }
         .header-instansi { font-size: 13pt; font-weight: bold; line-height: 1.2; text-transform: uppercase; }
         .nomor-ijazah { font-size: 12pt; font-weight: bold; margin-top: 10px; margin-bottom: 15px; }
         
-        /* NARASI */
         .narasi-ebtaq { font-size: 12.5pt; line-height: 1.5; text-align: justify; text-align-last: center; margin-bottom: 15px; }
         .nama-santri-text { font-size: 22pt; font-weight: bold; text-decoration: underline; margin: 10px 0; text-transform: uppercase; }
 
@@ -71,64 +70,59 @@
 
         .pernyataan-teks { font-size: 12pt; margin-top: 15px; line-height: 1.5; text-align: justify; }
 
-        /* TITIMANGSA (BARIS MANDIRI RATA KANAN) */
+        /* TITIMANGSA (RATA KANAN) */
         .titimangsa-row {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: auto; /* Mendorong ke bawah di atas footer */
-            margin-bottom: 10px;
-            padding-right: 0;
+            display: flex; justify-content: flex-end;
+            margin-top: auto; margin-bottom: 10px;
         }
-        .titimangsa-content {
-            display: flex;
-            align-items: center;
-            font-size: 12pt;
-        }
+        .titimangsa-content { display: flex; align-items: center; font-size: 12pt; }
         .kota-part { margin-right: 10px; }
         .date-stack { display: flex; flex-direction: column; align-items: center; min-width: 170px; }
         .hr-divider { width: 100%; height: 0; border-bottom: 1px solid black; margin: 3px 0; }
 
-        /* FOOTER SIGNATURE GRID (3 KOLOM SEJAJAR) */
+        /* FOOTER GRID */
         .footer-grid {
-            display: grid; 
-            grid-template-columns: 1fr 115px 1fr;
-            align-items: flex-end; 
-            text-align: center; 
-            font-size: 12pt;
+            display: grid; grid-template-columns: 1fr 115px 1fr;
+            align-items: flex-end; text-align: center; font-size: 12pt;
             padding-bottom: 1.2cm;
         }
-
         .photo-frame-98 { width: 2.95cm; height: 3.95cm; border: 0.5pt solid #000; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
         .photo-inner-80 { width: 2.4cm; height: 3.2cm; overflow: hidden; }
         .photo-inner-80 img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
 
-        /* ALIGNMENT JABATAN (FIXED HEIGHT UNTUK SEJAJAR) */
         .sign-block { display: flex; flex-direction: column; justify-content: flex-end; height: 100px; }
         .sign-label { font-size: 12pt; line-height: 1.2; margin-bottom: auto; }
         .sign-name { font-size: 12pt; font-weight: bold; text-decoration: underline; margin-top: 60px; }
+
+        /* INFO HALAMAN */
+        .page-numbering {
+            position: absolute; bottom: 5mm; right: 10mm;
+            font-size: 8pt; color: #999; font-family: Arial;
+        }
 
         @media print {
             body { background: none; padding: 0; }
             .control-panel { display: none !important; }
             .page-canvas { margin: 0; box-shadow: none; }
+            .page-numbering { color: #000; } /* Terlihat saat print untuk sorting */
         }
     </style>
 </head>
 <body>
 
 <div class="control-panel">
-    <h3>PANEL KONTROL - Skrip 003 v16</h3>
+    <h3>PANEL KONTROL - Skrip 003 v17</h3>
     <div class="row">
         <div class="group">
-            <label>1. Upload CSV (ViewData)</label>
+            <label>1. Upload CSV</label>
             <input type="file" id="csv-input" accept=".csv" onchange="readCSV()">
         </div>
         <div class="group">
-            <label>2. Nomor Urut (Kosong = Pakai No. CSV)</label>
-            <input type="number" id="cfg-no-start" placeholder="Contoh: 101">
+            <label>2. Nomor Urut Awal (Kosong = Ambil Kolom 'No.')</label>
+            <input type="number" id="cfg-no-start" placeholder="Contoh: 1">
         </div>
         <div class="group">
-            <label>3. Tanggal Masehi (Otomatis Hari Ini)</label>
+            <label>3. Tanggal Masehi (TTD)</label>
             <input type="date" id="m-date-input">
         </div>
     </div>
@@ -143,13 +137,13 @@
                 <option value="Syawal">Syawal</option><option value="Dzulqo'dah">Dzulqo'dah</option><option value="Dzulhijjah">Dzulhijjah</option>
             </select>
         </div>
-        <div class="group" style="flex:0.7"><label>Tahun Hijriyah (Reff Nomor)</label><input type="number" id="h-thn-input" placeholder="1446"></div>
+        <div class="group" style="flex:0.7"><label>Tahun Hijriyah</label><input type="number" id="h-thn-input" placeholder="1446"></div>
     </div>
     <div class="verify-box" id="verify-area" style="display:none;">
-        <label>5. Verifikasi Lembaga & Nama Kepala</label>
+        <label>5. Verifikasi & Pengeditan Lembaga</label>
         <div class="row" style="margin-top:8px;">
             <select id="sel-lembaga" onchange="loadMem()"></select>
-            <input id="v-alias" placeholder="Nama Lembaga untuk Ijazah">
+            <input id="v-alias" placeholder="Nama Lembaga Baru">
             <input id="v-head" placeholder="Nama Kepala Lembaga">
             <button onclick="saveMem()" style="padding:0 15px; cursor:pointer;">Simpan Data</button>
         </div>
@@ -161,8 +155,8 @@
 
 <script>
     let dbCSV = [];
-    let lMemory = JSON.parse(localStorage.getItem('ebtaq_production_v16')) || {};
-    const LOKASI_CONST = "TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak";
+    let lMemory = JSON.parse(localStorage.getItem('ebtaq_v17_mem')) || {};
+    const LOKASI_FIX = "TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak";
 
     window.onload = () => {
         const today = new Date().toISOString().split('T')[0];
@@ -202,12 +196,9 @@
     function saveMem() {
         const k = document.getElementById('sel-lembaga').value;
         if(k) {
-            lMemory[k] = {
-                alias: document.getElementById('v-alias').value,
-                head: document.getElementById('v-head').value
-            };
-            localStorage.setItem('ebtaq_production_v16', JSON.stringify(lMemory));
-            alert("Data Lembaga Disimpan");
+            lMemory[k] = { alias: document.getElementById('v-alias').value, head: document.getElementById('v-head').value };
+            localStorage.setItem('ebtaq_v17_mem', JSON.stringify(lMemory));
+            alert("Tersimpan!");
         }
     }
 
@@ -217,14 +208,11 @@
         const d = new Date(ds); return `${d.getDate()} ${b[d.getMonth()]} ${d.getFullYear()} M`;
     }
 
-    // FUNGSI TANGGAL LAHIR DD MMM YYYY
     function formatFullDate(s) {
         if(!s || s === "-") return "-";
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const p = s.split('/');
-        if(p.length === 3) {
-            return `${parseInt(p[0])} ${months[parseInt(p[1]) - 1]} ${p[2]}`;
-        }
+        if(p.length === 3) return `${parseInt(p[0])} ${months[parseInt(p[1]) - 1]} ${p[2]}`;
         return s;
     }
 
@@ -239,18 +227,20 @@
         const out = document.getElementById('output');
         out.innerHTML = '';
         
-        let manualStart = document.getElementById('cfg-no-start').value;
-        let currentSeq = manualStart ? parseInt(manualStart) : null;
-        
-        const hThn = document.getElementById('h-thn-input').value;
-        const hFull = `${document.getElementById('h-tgl-input').value} ${document.getElementById('h-bln-input').value} ${hThn} H`;
+        const hY = document.getElementById('h-thn-input').value;
+        const hFull = `${document.getElementById('h-tgl-input').value} ${document.getElementById('h-bln-input').value} ${hY} H`;
         const mFull = formatMasehi(document.getElementById('m-date-input').value);
         const memData = lMemory[targetSch] || { alias: targetSch, head: ".................." };
 
-        dbCSV.filter(d => d['ASAL LEMBAGA'] === targetSch && d['L / TL'] === "L").forEach(d => {
-            // NOMOR URUT: Manual form atau Kolom "No." (A)
+        let manualStart = document.getElementById('cfg-no-start').value;
+        let currentSeq = manualStart ? parseInt(manualStart) : null;
+        
+        const listToPrint = dbCSV.filter(d => d['ASAL LEMBAGA'] === targetSch && d['L / TL'] === "L");
+        const total = listToPrint.length;
+
+        listToPrint.forEach((d, index) => {
             let rawNo = currentSeq !== null ? currentSeq : (d['NO.'] || d['NO'] || d['No.'] || "0000");
-            const noIjazah = `I . ${hThn} . 02.30 . E . ${String(rawNo).padStart(4, '0')}`;
+            const noIjazah = `I . ${hY} . 02.30 . E . ${String(rawNo).padStart(4, '0')}`;
             
             let waliName = (d['NAMA AYAH'] && d['NAMA AYAH'] !== "-") ? d['NAMA AYAH'] : d['NAMA IBU'];
             const capWali = waliName.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
@@ -268,7 +258,7 @@
                         <div class="nomor-ijazah">Nomor: ${noIjazah}</div>
 
                         <div class="narasi-ebtaq">
-                            Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ), pada tanggal ${hFull} / ${mFull} yang diselenggarakan di ${LOKASI_CONST}, maka kami memutuskan bahwa santri yang bernama:
+                            Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ), pada tanggal ${hFull} / ${mFull} yang diselenggarakan di ${LOKASI_FIX}, maka kami memutuskan bahwa santri yang bernama:
                         </div>
 
                         <div class="nama-santri-text">${d['NAMA LENGKAP']}</div>
@@ -299,20 +289,17 @@
                                 <div class="sign-label">Kepala Lembaga<br>${memData.alias}</div>
                                 <div class="sign-name">${memData.head}</div>
                             </div>
-                            
                             <div class="photo-frame-98">
                                 <div class="photo-inner-80">${idDrive ? `<img src="https://drive.google.com/thumbnail?id=${idDrive}&sz=w400">` : '3x4'}</div>
                             </div>
-
                             <div class="sign-block">
-                                <div class="sign-label">
-                                    Penanggung Jawab Tashih<br>Korcab Qiroati Demak,
-                                </div>
+                                <div class="sign-label">Penanggung Jawab Tashih<br>Korcab Qiroati Demak,</div>
                                 <div class="sign-name">H.M. Warosy Abdullah, A.H.</div>
                             </div>
                         </div>
                     </div>
-                </div>`;
+                </div>
+                <div class="page-numbering">Halaman ${index + 1} dari ${total}</div>`;
             out.appendChild(page);
             if(currentSeq !== null) currentSeq++;
         });
