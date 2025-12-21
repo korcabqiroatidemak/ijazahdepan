@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>IJAZAH EBTAQ - Skrip 003 v17 Final</title>
+    <title>IJAZAH EBTAQ - Skrip 003 v18</title>
     <style>
         /* Ukuran Kertas F4 (215mm x 330mm) */
         @page { size: 215mm 330mm; margin: 0; }
@@ -38,7 +38,11 @@
             print-color-adjust: exact !important;
         }
         .printable-area {
-            position: absolute; top: 0.5cm; right: 0.5cm; bottom: 0.5cm; left: 0.5cm;
+            position: absolute; 
+            top: 0.5cm; 
+            right: 0.5cm; 
+            bottom: 0.5cm; 
+            left: 0.7cm; /* Margin kiri 0.7cm (7mm) */
             background-image: url('Border depan.png');
             background-size: 100% 100%; background-repeat: no-repeat;
         }
@@ -53,7 +57,7 @@
         .title-ijazah { 
             font-size: 28pt; font-weight: bold; 
             letter-spacing: 15px; 
-            text-indent: 15px; /* Obat agar teks tepat di tengah */
+            text-indent: 15px; 
             text-transform: uppercase; 
             margin-bottom: 5px; 
         }
@@ -94,7 +98,7 @@
         .sign-label { font-size: 12pt; line-height: 1.2; margin-bottom: auto; }
         .sign-name { font-size: 12pt; font-weight: bold; text-decoration: underline; margin-top: 60px; }
 
-        /* INFO HALAMAN */
+        /* INFO HALAMAN (HANYA LAYAR) */
         .page-numbering {
             position: absolute; bottom: 5mm; right: 10mm;
             font-size: 8pt; color: #999; font-family: Arial;
@@ -104,22 +108,22 @@
             body { background: none; padding: 0; }
             .control-panel { display: none !important; }
             .page-canvas { margin: 0; box-shadow: none; }
-            .page-numbering { color: #000; } /* Terlihat saat print untuk sorting */
+            .page-numbering { display: none !important; } /* Sembunyikan saat cetak */
         }
     </style>
 </head>
 <body>
 
 <div class="control-panel">
-    <h3>PANEL KONTROL - Skrip 003 v17</h3>
+    <h3>GENERATOR IJAZAH - Skrip 003 v18</h3>
     <div class="row">
         <div class="group">
             <label>1. Upload CSV</label>
             <input type="file" id="csv-input" accept=".csv" onchange="readCSV()">
         </div>
         <div class="group">
-            <label>2. Nomor Urut Awal (Kosong = Ambil Kolom 'No.')</label>
-            <input type="number" id="cfg-no-start" placeholder="Contoh: 1">
+            <label>2. No. Urut (Kosong = Ambil No. CSV)</label>
+            <input type="number" id="cfg-no-start">
         </div>
         <div class="group">
             <label>3. Tanggal Masehi (TTD)</label>
@@ -145,17 +149,17 @@
             <select id="sel-lembaga" onchange="loadMem()"></select>
             <input id="v-alias" placeholder="Nama Lembaga Baru">
             <input id="v-head" placeholder="Nama Kepala Lembaga">
-            <button onclick="saveMem()" style="padding:0 15px; cursor:pointer;">Simpan Data</button>
+            <button onclick="saveMem()" style="padding:0 15px; cursor:pointer;">Simpan</button>
         </div>
     </div>
-    <button class="btn-gen" onclick="generate()">GENERATE IJAZAH SEKARANG</button>
+    <button class="btn-gen" onclick="generate()">GENERATE IJAZAH</button>
 </div>
 
 <div id="output"></div>
 
 <script>
     let dbCSV = [];
-    let lMemory = JSON.parse(localStorage.getItem('ebtaq_v17_mem')) || {};
+    let lMemory = JSON.parse(localStorage.getItem('ebtaq_v18_mem')) || {};
     const LOKASI_FIX = "TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak";
 
     window.onload = () => {
@@ -197,8 +201,8 @@
         const k = document.getElementById('sel-lembaga').value;
         if(k) {
             lMemory[k] = { alias: document.getElementById('v-alias').value, head: document.getElementById('v-head').value };
-            localStorage.setItem('ebtaq_v17_mem', JSON.stringify(lMemory));
-            alert("Tersimpan!");
+            localStorage.setItem('ebtaq_v18_mem', JSON.stringify(lMemory));
+            alert("Data Tersimpan!");
         }
     }
 
@@ -218,11 +222,9 @@
 
     function generate() {
         const targetSch = document.getElementById('sel-lembaga').value;
-        if(!targetSch) return alert("Silakan pilih lembaga!");
+        if(!targetSch) return alert("Pilih lembaga!");
 
-        ['cfg-no-start', 'h-tgl-input', 'h-bln-input', 'h-thn-input'].forEach(id => {
-            localStorage.setItem(id, document.getElementById(id).value);
-        });
+        ['cfg-no-start', 'h-tgl-input', 'h-bln-input', 'h-thn-input'].forEach(id => localStorage.setItem(id, document.getElementById(id).value));
 
         const out = document.getElementById('output');
         out.innerHTML = '';
@@ -232,21 +234,18 @@
         const mFull = formatMasehi(document.getElementById('m-date-input').value);
         const memData = lMemory[targetSch] || { alias: targetSch, head: ".................." };
 
-        let manualStart = document.getElementById('cfg-no-start').value;
-        let currentSeq = manualStart ? parseInt(manualStart) : null;
+        let currentSeq = document.getElementById('cfg-no-start').value ? parseInt(document.getElementById('cfg-no-start').value) : null;
         
-        const listToPrint = dbCSV.filter(d => d['ASAL LEMBAGA'] === targetSch && d['L / TL'] === "L");
-        const total = listToPrint.length;
+        const list = dbCSV.filter(d => d['ASAL LEMBAGA'] === targetSch && d['L / TL'] === "L");
+        const total = list.length;
 
-        listToPrint.forEach((d, index) => {
+        list.forEach((d, idx) => {
             let rawNo = currentSeq !== null ? currentSeq : (d['NO.'] || d['NO'] || d['No.'] || "0000");
             const noIjazah = `I . ${hY} . 02.30 . E . ${String(rawNo).padStart(4, '0')}`;
             
             let waliName = (d['NAMA AYAH'] && d['NAMA AYAH'] !== "-") ? d['NAMA AYAH'] : d['NAMA IBU'];
             const capWali = waliName.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
-            const fLink = d['IMAGE'] || d['FOTO'] || "";
-            const idDrive = fLink.includes('id=') ? fLink.match(/id=([a-zA-Z0-9_-]+)/)[1] : null;
+            const idDrive = (d['IMAGE'] || d['FOTO'] || "").includes('id=') ? (d['IMAGE'] || d['FOTO']).match(/id=([a-zA-Z0-9_-]+)/)[1] : null;
 
             const page = document.createElement('div');
             page.className = 'page-canvas';
@@ -256,42 +255,30 @@
                         <div class="title-ijazah">I J A Z A H</div>
                         <div class="header-instansi">TAMAN PENDIDIKAN AL-QUR'AN<br>METODE QIROATI<br>KOORDINATOR CABANG DEMAK</div>
                         <div class="nomor-ijazah">Nomor: ${noIjazah}</div>
-
                         <div class="narasi-ebtaq">
                             Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ), pada tanggal ${hFull} / ${mFull} yang diselenggarakan di ${LOKASI_FIX}, maka kami memutuskan bahwa santri yang bernama:
                         </div>
-
                         <div class="nama-santri-text">${d['NAMA LENGKAP']}</div>
-
                         <table class="identitas-table">
                             <tr><td class="label-id">Bin / Binti</td><td class="sep-id">:</td><td>${capWali}</td></tr>
                             <tr><td class="label-id">Tempat, Tgl. Lahir</td><td class="sep-id">:</td><td>${d['TEMPAT LAHIR']}, ${formatFullDate(d['TANGGAL LAHIR'])}</td></tr>
                             <tr><td class="label-id">Asal Lembaga / TPQ</td><td class="sep-id">:</td><td style="text-transform:none;">${memData.alias}</td></tr>
                         </table>
-
                         <div class="pernyataan-teks">
                             dinyatakan LULUS KHATAM TINGKAT DASAR TPQ Metode Qiraati. Dan sebagai bukti, kepadanya diberikan ijazah ini sesuai dengan peraturan yang berlaku. Semoga Allah SWT memberinya ilmu yang bermanfaat dan berkah. Amin.
                         </div>
-
                         <div class="titimangsa-row">
                             <div class="titimangsa-content">
                                 <div class="kota-part">Demak,</div>
-                                <div class="date-stack">
-                                    <div>${hFull}</div>
-                                    <div class="hr-divider"></div>
-                                    <div>${mFull}</div>
-                                </div>
+                                <div class="date-stack"><div>${hFull}</div><div class="hr-divider"></div><div>${mFull}</div></div>
                             </div>
                         </div>
-
                         <div class="footer-grid">
                             <div class="sign-block">
                                 <div class="sign-label">Kepala Lembaga<br>${memData.alias}</div>
                                 <div class="sign-name">${memData.head}</div>
                             </div>
-                            <div class="photo-frame-98">
-                                <div class="photo-inner-80">${idDrive ? `<img src="https://drive.google.com/thumbnail?id=${idDrive}&sz=w400">` : '3x4'}</div>
-                            </div>
+                            <div class="photo-frame-98"><div class="photo-inner-80">${idDrive ? `<img src="https://drive.google.com/thumbnail?id=${idDrive}&sz=w400">` : '3x4'}</div></div>
                             <div class="sign-block">
                                 <div class="sign-label">Penanggung Jawab Tashih<br>Korcab Qiroati Demak,</div>
                                 <div class="sign-name">H.M. Warosy Abdullah, A.H.</div>
@@ -299,7 +286,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="page-numbering">Halaman ${index + 1} dari ${total}</div>`;
+                <div class="page-numbering">Halaman ${idx + 1} dari ${total}</div>`;
             out.appendChild(page);
             if(currentSeq !== null) currentSeq++;
         });
