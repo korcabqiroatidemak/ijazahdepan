@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>IJAZAH EBTAQ - REVISI FINAL</title>
+    <title>GENERATOR IJAZAH EBTAQ - REVISI AKURAT</title>
     <style>
         @page { size: 210mm 330mm; margin: 0; }
         body { margin: 0; padding: 0; background-color: #525659; font-family: "Times New Roman", serif; }
@@ -18,7 +18,7 @@
         label { font-size: 11px; font-weight: bold; font-family: Arial; color: #555; }
         input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
         
-        .verify-box { background: #f8f9fa; border: 1px solid #007bff33; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+        .verify-box { background: #f0f7ff; border: 1px solid #007bff; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
         .btn { width: 100%; padding: 14px; background: #28a745; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 14px; }
 
         /* ================= KANVAS IJAZAH ================= */
@@ -37,30 +37,27 @@
 
         .content-overlay {
             position: relative; width: 100%; height: 100%;
-            /* Margin atas 9.1 cm untuk menghindari Hologram */
+            /* Margin 9.1 cm untuk menghindari Hologram */
             padding: 9.1cm 2.2cm 1.5cm 2.2cm; 
             box-sizing: border-box; text-align: center;
             display: flex; flex-direction: column;
         }
 
-        /* HEADER */
-        .header-instansi { font-size: 13pt; font-weight: bold; line-height: 1.2; margin-bottom: 2px; }
-        .title-ijazah { font-size: 28pt; font-weight: bold; margin: 5px 0 0 0; letter-spacing: 2px; }
-        .nomor-ijazah { font-size: 11pt; margin-bottom: 15px; }
+        .header-instansi { font-size: 13pt; font-weight: bold; line-height: 1.2; }
+        .title-ijazah { font-size: 28pt; font-weight: bold; margin: 10px 0 2px 0; }
+        .nomor-ijazah { font-size: 12pt; margin-bottom: 15px; }
         
-        .narasi-ebtaq { font-size: 12pt; line-height: 1.35; margin-bottom: 15px; text-align: center; }
+        .narasi-ebtaq { font-size: 12pt; line-height: 1.4; margin-bottom: 15px; text-align: center; }
 
-        /* NAMA DAN IDENTITAS */
-        .nama-lengkap-ijazah { font-size: 21pt; font-weight: bold; text-decoration: underline; margin: 12px 0; text-transform: uppercase; }
+        .nama-santri { font-size: 22pt; font-weight: bold; text-decoration: underline; margin: 10px 0; text-transform: uppercase; }
         
-        .identitas-table { margin: 5px auto; width: 100%; font-size: 12.5pt; line-height: 1.5; border-collapse: collapse; }
+        .identitas-table { margin: 5px auto; width: 100%; font-size: 13pt; line-height: 1.6; border-collapse: collapse; }
         .identitas-table td { vertical-align: top; padding: 2px 0; text-align: left; }
-        .label-cell { width: 165px; font-weight: bold; }
-        .sep-cell { width: 15px; text-align: center; }
+        .label-id { width: 170px; font-weight: bold; }
+        .sep-id { width: 20px; text-align: center; }
 
-        .pernyataan-lulus { font-size: 12pt; margin-top: 15px; line-height: 1.45; text-align: justify; }
+        .pernyataan { font-size: 12pt; margin-top: 15px; line-height: 1.5; text-align: justify; }
 
-        /* FOOTER TANDA TANGAN */
         .footer-section {
             margin-top: auto; padding-bottom: 1cm;
             display: grid; grid-template-columns: 1fr 110px 1fr;
@@ -71,11 +68,11 @@
             width: 2.4cm; height: 3.2cm; /* 80% dari 3x4 */
             border: 1px solid #ddd; margin: 0 auto;
             display: flex; align-items: center; justify-content: center;
-            opacity: 0.35; overflow: hidden; background: #fafafa;
+            opacity: 0.3; overflow: hidden;
         }
         .foto-watermark img { width: 100%; height: 100%; object-fit: cover; }
 
-        .sign-name { font-size: 12pt; font-weight: bold; margin-top: 65px; text-decoration: underline; }
+        .nama-ttd { font-size: 12pt; font-weight: bold; margin-top: 70px; text-decoration: underline; }
 
         @media print {
             body { background: none; padding: 0; }
@@ -87,108 +84,112 @@
 <body>
 
 <div class="control-panel">
-    <h3>PANEL KONTROL IJAZAH</h3>
+    <h3>PANEL IJAZAH EBTAQ v4 (FIX)</h3>
     
     <div class="row">
         <div class="group">
             <label>1. Upload CSV</label>
-            <input type="file" id="csv-input" accept=".csv" onchange="readCSV()">
+            <input type="file" id="csv-input" accept=".csv" onchange="initCSV()">
         </div>
         <div class="group">
-            <label>2. Bagian Nomor (I.1446.02.30)</label>
-            <input id="cfg-base-no" placeholder="I.1446.02.30">
+            <label>2. Tahun Hijriah (Nomor)</label>
+            <input id="cfg-thn" placeholder="1446" oninput="save()">
         </div>
         <div class="group">
             <label>3. No. Urut Mulai</label>
-            <input type="number" id="cfg-start-no" value="1">
+            <input type="number" id="cfg-start" value="1" oninput="save()">
         </div>
     </div>
 
     <div class="verify-box" id="verify-area" style="display:none;">
-        <label>4. Verifikasi Lembaga (Pilih untuk set Nama Kepala)</label>
+        <label>4. Verifikasi & Input Data Lembaga</label>
         <div class="row" style="margin-top:5px;">
-            <select id="sel-lembaga" onchange="loadLembaga()"></select>
-            <input id="v-alias" placeholder="Koreksi Nama Lembaga">
-            <input id="v-kepala" placeholder="Nama Kepala Lembaga">
-            <button onclick="saveLembaga()">Simpan</button>
+            <select id="sel-lembaga" onchange="loadLembagaData()" style="flex:1.5;"></select>
+            <input id="v-alias" placeholder="Koreksi Nama Lembaga" oninput="saveLembaga()">
+            <input id="v-kepala" placeholder="Nama Kepala" oninput="saveLembaga()">
+            <input id="v-korcam" placeholder="Nama Korcam" oninput="saveLembaga()">
         </div>
     </div>
 
     <div class="row">
         <div class="group">
-            <label>5. Tanggal Hijriyah (EBTAQ & TTD)</label>
-            <input id="cfg-tgl-h" placeholder="12 Rojab 1446 H">
+            <label>5. Tanggal Hijriyah (Pelaksanaan & TTD)</label>
+            <input id="cfg-tgl-h" placeholder="12 Rojab 1446 H" oninput="save()">
         </div>
         <div class="group">
-            <label>6. Tanggal Masehi (EBTAQ & TTD)</label>
-            <input id="cfg-tgl-m" placeholder="12 Januari 2025 M">
+            <label>6. Tanggal Masehi (Pelaksanaan & TTD)</label>
+            <input id="cfg-tgl-m" placeholder="12 Januari 2025 M" oninput="save()">
         </div>
         <div class="group">
             <label>7. Lokasi Pelaksanaan</label>
-            <input id="cfg-lokasi" value="TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak">
+            <input id="cfg-lokasi" value="TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak" oninput="save()">
         </div>
     </div>
 
-    <button class="btn" onclick="generate()">GENERATE IJAZAH SEKARANG</button>
+    <button class="btn" onclick="render()">GENERATE IJAZAH</button>
 </div>
 
 <div id="output"></div>
 
 <script>
-    let dataCSV = [];
-    let mapLembaga = JSON.parse(localStorage.getItem('ijazah_map_v4')) || {};
+    let listData = [];
+    let lMap = JSON.parse(localStorage.getItem('ijazah_lmap_v4')) || {};
 
-    // Load History
     window.onload = () => {
-        ['cfg-base-no', 'cfg-start-no', 'cfg-tgl-h', 'cfg-tgl-m', 'cfg-lokasi'].forEach(id => {
+        ['cfg-thn', 'cfg-start', 'cfg-tgl-h', 'cfg-tgl-m', 'cfg-lokasi'].forEach(id => {
             if(localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
         });
     };
 
-    function readCSV() {
+    function save() {
+        ['cfg-thn', 'cfg-start', 'cfg-tgl-h', 'cfg-tgl-m', 'cfg-lokasi'].forEach(id => {
+            localStorage.setItem(id, document.getElementById(id).value);
+        });
+    }
+
+    function initCSV() {
         const file = document.getElementById('csv-input').files[0];
         const reader = new FileReader();
         reader.onload = (e) => {
-            const content = e.target.result;
-            const lines = content.split(/\r?\n/).filter(l => l.trim() !== "");
-            const headers = lines[0].split(';').map(h => h.replace(/"/g, '').trim());
+            const lines = e.target.result.split(/\r?\n/).filter(l => l.trim() !== "");
+            const headers = lines[0].split(';').map(h => h.replace(/"/g, '').trim().toUpperCase());
             
-            dataCSV = lines.slice(1).map(line => {
+            listData = lines.slice(1).map(line => {
                 const cols = line.split(';').map(c => c.replace(/"/g, '').trim());
                 let obj = {};
                 cols.forEach((v, i) => { if(headers[i]) obj[headers[i]] = v; });
                 return obj;
             });
 
-            // Fill Dropdown
-            const listLembaga = [...new Set(dataCSV.map(d => d['Asal Lembaga']))].sort();
+            const uniqueLembaga = [...new Set(listData.map(d => d['ASAL LEMBAGA']))].sort();
             const sel = document.getElementById('sel-lembaga');
             sel.innerHTML = '<option value="">-- Pilih Lembaga --</option>';
-            listLembaga.forEach(l => { sel.innerHTML += `<option value="${l}">${l}</option>`; });
+            uniqueLembaga.forEach(l => { sel.innerHTML += `<option value="${l}">${l}</option>`; });
             document.getElementById('verify-area').style.display = 'block';
         };
         reader.readAsText(file);
     }
 
-    function loadLembaga() {
+    function loadLembagaData() {
         const key = document.getElementById('sel-lembaga').value;
-        const data = mapLembaga[key] || { alias: key, kepala: "" };
-        document.getElementById('v-alias').value = data.alias;
-        document.getElementById('v-kepala').value = data.kepala;
+        const d = lMap[key] || { alias: key, kepala: "", korcam: "" };
+        document.getElementById('v-alias').value = d.alias;
+        document.getElementById('v-kepala').value = d.kepala;
+        document.getElementById('v-korcam').value = d.korcam;
     }
 
     function saveLembaga() {
         const key = document.getElementById('sel-lembaga').value;
         if(!key) return;
-        mapLembaga[key] = {
+        lMap[key] = {
             alias: document.getElementById('v-alias').value,
-            kepala: document.getElementById('v-kepala').value
+            kepala: document.getElementById('v-kepala').value,
+            korcam: document.getElementById('v-korcam').value
         };
-        localStorage.setItem('ijazah_map_v4', JSON.stringify(mapLembaga));
-        alert("Data tersimpan!");
+        localStorage.setItem('ijazah_lmap_v4', JSON.stringify(lMap));
     }
 
-    function formatTgl(str) {
+    function formatIndoDate(str) {
         if(!str || str === "-") return "-";
         const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const p = str.split('/');
@@ -196,40 +197,30 @@
         return `${parseInt(p[0])} ${bulan[parseInt(p[1])-1]} ${p[2]}`;
     }
 
-    function toTitleCase(str) {
-        if(!str || str === "-") return "-";
-        return str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    }
-
-    function generate() {
-        // Save inputs to LocalStorage
-        ['cfg-base-no', 'cfg-start-no', 'cfg-tgl-h', 'cfg-tgl-m', 'cfg-lokasi'].forEach(id => {
-            localStorage.setItem(id, document.getElementById(id).value);
-        });
-
+    function render() {
         const out = document.getElementById('output');
         out.innerHTML = '';
         
-        let startNo = parseInt(document.getElementById('cfg-start-no').value);
-        const baseNo = document.getElementById('cfg-base-no').value;
+        let noUrut = parseInt(document.getElementById('cfg-start').value);
+        const thn = document.getElementById('cfg-thn').value;
         const tglH = document.getElementById('cfg-tgl-h').value;
         const tglM = document.getElementById('cfg-tgl-m').value;
-        const lokasi = document.getElementById('cfg-lokasi').value;
+        const lok = document.getElementById('cfg-lokasi').value;
 
-        // Filter Hanya Lulus
-        const lulus = dataCSV.filter(d => d['L / TL'] === "L");
+        const filtered = listData.filter(d => d['L / TL'] === "L");
 
-        lulus.forEach(d => {
-            const vLembaga = mapLembaga[d['Asal Lembaga']] || { alias: d['Asal Lembaga'], kepala: "...................." };
-            const fullNo = `${baseNo}.${String(startNo).padStart(4, '0')}`;
+        filtered.forEach(d => {
+            const v = lMap[d['ASAL LEMBAGA']] || { alias: d['ASAL LEMBAGA'], kepala: "..................", korcam: "" };
+            const fullNo = `I . ${thn} . 02.30 . E . ${String(noUrut).padStart(4, '0')}`;
             
-            // Logic Bin/Binti (Fallback Ayah -> Ibu)
-            let wali = (d['Nama Ayah'] && d['Nama Ayah'] !== "-") ? d['Nama Ayah'] : d['Nama Ibu'];
+            // Logika Fallback Wali
+            let wali = (d['NAMA AYAH'] && d['NAMA AYAH'] !== "-") ? d['NAMA AYAH'] : d['NAMA IBU'];
+            const capWali = wali.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-            // Link Foto
-            const fUrl = d['Image'] || "";
-            const idDrive = fUrl.includes('id=') ? fUrl.match(/id=([a-zA-Z0-9_-]+)/)[1] : null;
-            const imgTag = idDrive ? `<img src="https://drive.google.com/thumbnail?id=${idDrive}&sz=w400">` : `FOTO 3x4`;
+            // Image ID logic
+            const fUrl = d['IMAGE'] || d['FOTO'] || "";
+            const id = fUrl.includes('id=') ? fUrl.match(/id=([a-zA-Z0-9_-]+)/)[1] : null;
+            const imgHtml = id ? `<img src="https://drive.google.com/thumbnail?id=${id}&sz=w400">` : `FOTO 3x4`;
 
             const page = document.createElement('div');
             page.className = 'page-canvas';
@@ -242,35 +233,34 @@
 
                         <div class="narasi-ebtaq">
                             Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiroati (EBTAQ), pada tanggal ${tglH} / ${tglM}.<br>
-                            Yang diselenggarakan di ${lokasi}.<br>
+                            Yang diselenggarakan di ${lok}.<br>
                             Maka kami memutuskan bahwa santri yang bernama:
                         </div>
 
-                        <div class="nama-lengkap-ijazah">${d['Nama Lengkap']}</div>
+                        <div class="nama-santri">${d['NAMA LENGKAP']}</div>
 
                         <table class="identitas-table">
-                            <tr><td class="label-cell">Bin / Binti</td><td class="sep-cell">:</td><td>${toTitleCase(wali)}</td></tr>
-                            <tr><td class="label-cell">Tempat, Tgl. Lahir</td><td class="sep-cell">:</td><td>${d['TEMPAT LAHIR']}, ${formatTgl(d['TANGGAL LAHIR'])}</td></tr>
-                            <tr><td class="label-cell">Asal Lembaga / TPQ</td><td class="sep-cell">:</td><td style="text-transform:none;">${vLembaga.alias}</td></tr>
+                            <tr><td class="label-id">Bin / Binti</td><td class="sep-id">:</td><td>${capWali}</td></tr>
+                            <tr><td class="label-id">Tempat, Tgl. Lahir</td><td class="sep-id">:</td><td>${d['TEMPAT LAHIR']}, ${formatIndoDate(d['TANGGAL LAHIR'])}</td></tr>
+                            <tr><td class="label-id">Asal Lembaga / TPQ</td><td class="sep-id">:</td><td style="text-transform:none;">${v.alias}</td></tr>
                         </table>
 
-                        <div class="pernyataan-lulus">
+                        <div class="pernyataan">
                             dinyatakan LULUS KHATAM TINGKAT DASAR TPQ Metode Qiraati. Dan sebagai bukti, kepadanya diberikan ijazah ini sesuai dengan peraturan yang berlaku. Semoga Allah SWT memberinya ilmu yang bermanfaat dan berkah. Amin.
                         </div>
 
                         <div class="footer-section">
-                            <div>Kepala Lembaga<br>${vLembaga.alias},<br><br><br><div class="sign-name">${vLembaga.kepala}</div></div>
-                            <div class="foto-watermark">${imgTag}</div>
-                            <div>Demak, ${tglH}<br>${tglM}<br><div style="font-size:9pt; margin-top:5px;">Penanggung Jawab Tashih Korcab Qiroati Demak,</div><div class="sign-name">H.M. Warosy Abdullah, A.H.</div></div>
+                            <div>Kepala Lembaga<br>${v.alias},<br><br><br><div class="nama-ttd">${v.kepala}</div></div>
+                            <div class="foto-watermark">${imgHtml}</div>
+                            <div>Demak, ${tglH}<br>${tglM}<br><div style="font-size:9pt; margin-top:5px;">Penanggung Jawab Tashih Korcab Qiroati Demak,</div><div class="nama-ttd">H.M. Warosy Abdullah, A.H.</div></div>
                         </div>
                     </div>
                 </div>
             `;
             out.appendChild(page);
-            startNo++;
+            noUrut++;
         });
-
-        localStorage.setItem('cfg-start-no', startNo);
+        localStorage.setItem('cfg-start', noUrut);
     }
 </script>
 
