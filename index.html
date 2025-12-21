@@ -2,77 +2,204 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Template Ijazah Halaman Depan</title>
+    <title>IJAZAH EBTAQ - GENERATOR MASSAL</title>
     <style>
-        /* Pengaturan Ukuran Kertas F4 */
-        @page {
-            size: 210mm 330mm;
-            margin: 0; /* Margin fisik printer nol, kita atur di padding */
-        }
+        @page { size: 210mm 330mm; margin: 0; }
+        body { margin: 0; padding: 0; background-color: #525659; font-family: "Times New Roman", serif; }
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-            font-family: "Times New Roman", Times, serif;
+        /* ================= PANEL KONTROL ================= */
+        .control-panel {
+            background: #fff; width: 210mm; margin: 20px auto;
+            padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
+        .row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .group { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 11px; font-weight: bold; font-family: Arial; }
+        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn { width: 100%; padding: 12px; background: #28a745; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; }
 
-        /* Container Utama */
+        /* ================= KANVAS IJAZAH ================= */
         .page-canvas {
-            width: 210mm;
-            height: 330mm;
-            margin: 10mm auto; /* Untuk tampilan preview di layar */
-            background-color: white;
-            position: relative;
-            box-sizing: border-box;
-            overflow: hidden;
-            display: block;
+            width: 210mm; height: 330mm; margin: 10mm auto;
+            background-color: white; position: relative;
+            box-sizing: border-box; overflow: hidden;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            page-break-after: always;
         }
 
-        /* Area Cetak dengan Margin 0.5cm */
         .printable-area {
-            position: absolute;
-            top: 0.5cm;
-            right: 0.5cm;
-            bottom: 0.5cm;
-            left: 0.5cm;
-            
-            /* Background Border */
+            position: absolute; top: 0.5cm; right: 0.5cm; bottom: 0.5cm; left: 0.5cm;
             background-image: url('Border depan.png');
-            background-size: contain; /* Scale to Fit */
-            background-repeat: no-repeat;
-            background-position: center;
-            
-            /* Border bantuan (bisa dihapus nanti) */
-            border: 0.1mm solid rgba(0,0,0,0.1);
+            background-size: contain; background-repeat: no-repeat; background-position: center;
         }
 
-        /* Area Konten (Tempat menaruh data identitas nanti) */
         .content-overlay {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            padding: 2cm; /* Ruang agar teks tidak menabrak gambar border */
-            box-sizing: border-box;
-            z-index: 2;
+            position: relative; width: 100%; height: 100%;
+            padding: 3.5cm 2.5cm; /* Ruang agar teks di dalam border */
+            box-sizing: border-box; text-align: center;
         }
 
-        /* Pengaturan Cetak */
+        /* DATA STYLING */
+        .nomor-ijazah { font-size: 12pt; margin-top: 50px; }
+        .pembuka { font-size: 13pt; margin-top: 30px; line-height: 1.5; }
+        .nama-santri { font-size: 22pt; font-weight: bold; text-decoration: underline; margin: 25px 0; text-transform: uppercase; }
+        
+        .data-table { margin: 0 auto; font-size: 13pt; border-collapse: collapse; text-align: left; }
+        .data-table td { padding: 5px 0; vertical-align: top; }
+        .label-cell { width: 150px; font-weight: bold; }
+        .sep-cell { width: 20px; text-align: center; }
+
+        .pernyataan { font-size: 13pt; margin-top: 30px; line-height: 1.5; text-align: justify; }
+
+        /* AREA TANDA TANGAN & FOTO */
+        .ttd-section { margin-top: 40px; display: flex; justify-content: space-between; padding: 0 1cm; text-align: center; }
+        .foto-box {
+            width: 2.4cm; height: 3.2cm; /* 3x4 scaled 80% */
+            border: 1px solid #000; display: flex; align-items: center;
+            justify-content: center; font-size: 8pt; color: #999; margin-top: 20px;
+        }
+        .titimangsa-box { font-size: 12pt; }
+        .nama-pejabat { font-size: 13pt; font-weight: bold; margin-top: 70px; text-decoration: underline; }
+
         @media print {
-            body { background: none; }
+            body { background: none; padding: 0; }
+            .control-panel, .page-label { display: none; }
             .page-canvas { margin: 0; box-shadow: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="page-canvas">
-        <div class="printable-area">
-            <div class="content-overlay">
-                </div>
+<div class="control-panel">
+    <h3>IJAZAH GENERATOR - CABANG DEMAK</h3>
+    <div class="row">
+        <div class="group">
+            <label>Upload CSV</label>
+            <input type="file" id="csv-file" accept=".csv">
+        </div>
+        <div class="group">
+            <label>Tahun Hijriyah (No. Ijazah)</label>
+            <input id="thn-h" placeholder="Contoh: 1446">
+        </div>
+        <div class="group">
+            <label>No. Urut Awal</label>
+            <input type="number" id="no-urut" placeholder="Contoh: 1">
         </div>
     </div>
+    <div class="row">
+        <div class="group">
+            <label>Titimangsa Hijriyah</label>
+            <input id="tgl-h" placeholder="Contoh: 27 Rojab 1446 H">
+        </div>
+        <div class="group">
+            <label>Titimangsa Masehi</label>
+            <input id="tgl-m" placeholder="Contoh: 27 Januari 2025 M">
+        </div>
+    </div>
+    <button class="btn" onclick="generate()">GENERATE IJAZAH SEKARANG</button>
+</div>
+
+<div id="output"></div>
+
+<script>
+    // 1. Inisialisasi Data & History
+    window.onload = () => {
+        const history = ['thn-h', 'no-urut', 'tgl-h', 'tgl-m'];
+        history.forEach(id => {
+            if(localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
+        });
+    };
+
+    function saveHistory() {
+        const ids = ['thn-h', 'no-urut', 'tgl-h', 'tgl-m'];
+        ids.forEach(id => localStorage.setItem(id, document.getElementById(id).value));
+    }
+
+    function formatTanggal(str) {
+        if (!str) return "";
+        const bln = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const d = new Date(str.split('/').reverse().join('-')); // Support dd/mm/yyyy
+        if(isNaN(d.getTime())) return str;
+        return `${d.getDate()} ${bln[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    async function generate() {
+        const fileInput = document.getElementById('csv-file');
+        if(!fileInput.files[0]) return alert("Pilih file CSV terlebih dahulu!");
+        
+        saveHistory();
+        const thnH = document.getElementById('thn-h').value;
+        let startNo = parseInt(document.getElementById('no-urut').value);
+        const tglH = document.getElementById('tgl-h').value;
+        const tglM = document.getElementById('tgl-m').value;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const rows = text.split('\n');
+            const headers = rows[0].split(';').map(h => h.replace(/"/g, '').trim().toUpperCase());
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+
+            rows.slice(1).forEach(row => {
+                if(!row) return;
+                const cols = row.split(';').map(c => c.replace(/"/g, '').trim());
+                let p = {};
+                cols.forEach((v, i) => p[headers[i]] = v);
+
+                // FILTER: Hanya Peserta LULUS
+                if(p['L / TL'] === "L") {
+                    const noIjazah = `I . ${thnH} . 02.30 . E . ${String(startNo).padStart(3, '0')}`;
+                    output.appendChild(createIjazah(p, noIjazah, tglH, tglM));
+                    startNo++;
+                }
+            });
+            // Update Nomor Terakhir ke History
+            localStorage.setItem('no-urut', startNo);
+        };
+        reader.readAsText(fileInput.files[0]);
+    }
+
+    function createIjazah(d, noIjazah, tglH, tglM) {
+        const div = document.createElement('div');
+        div.className = 'page-canvas';
+        
+        div.innerHTML = `
+            <div class="printable-area">
+                <div class="content-overlay">
+                    <div class="nomor-ijazah">Nomor: ${noIjazah}</div>
+                    
+                    <div class="pembuka">
+                        Koordinator Pendidikan Al-Qur'an Metode Qiraati Cabang Demak, berdasarkan hasil Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ) memberikan Ijazah kepada:
+                    </div>
+
+                    <div class="nama-santri">${d['NAMA LENGKAP'] || '-'}</div>
+
+                    <table class="data-table">
+                        <tr><td class="label-cell">Tempat, Tgl Lahir</td><td class="sep-cell">:</td><td>${d['TEMPAT LAHIR']}, ${formatTanggal(d['TANGGAL LAHIR'])}</td></tr>
+                        <tr><td class="label-cell">Anak dari Bapak</td><td class="sep-cell">:</td><td>${d['NAMA AYAH'] || '-'}</td></tr>
+                        <tr><td class="label-cell">Asal TPQ</td><td class="sep-cell">:</td><td style="text-transform:none;">${d['ASAL LEMBAGA'] || '-'}</td></tr>
+                    </table>
+
+                    <div class="pernyataan">
+                        dinyatakan LULUS KHATAM TINGKAT DASAR TPQ Metode Qiraati. Dan sebagai bukti, kepadanya diberikan ijazah ini sesuai dengan peraturan yang berlaku. Semoga Allah SWT memberinya ilmu yang bermanfaat dan berkah. Amin.
+                    </div>
+
+                    <div class="ttd-section">
+                        <div class="foto-box">FOTO 3x4</div>
+                        <div class="titimangsa-box">
+                            Demak, ${tglH}<br>
+                            ${tglM}<br><br>
+                            Penanggung Jawab Tashih Korcab Qiroati Demak,<br>
+                            <div class="nama-pejabat">H.M. Warosy Abdullah, A.H.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        return div;
+    }
+</script>
 
 </body>
 </html>
