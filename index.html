@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>GENERATOR IJAZAH EBTAQ - MASTER FINAL</title>
+    <title>GENERATOR IJAZAH EBTAQ - FIX FINAL LAYOUT</title>
     <style>
         @page { size: 210mm 330mm; margin: 0; }
         body { margin: 0; padding: 0; background-color: #525659; font-family: "Times New Roman", serif; }
@@ -35,19 +35,21 @@
         }
         .content-overlay {
             position: relative; width: 100%; height: 100%;
-            padding: 8.6cm 2.2cm 1.5cm 2.2cm; 
+            padding: 8.6cm 2.2cm 1.5cm 2.2cm; /* Margin 8.6cm untuk Hologram */
             box-sizing: border-box; text-align: center;
             display: flex; flex-direction: column;
         }
 
-        /* HEADER */
+        /* HEADER SECTION (URUTAN BARU) */
+        .title-ijazah { font-size: 28pt; font-weight: bold; letter-spacing: 15px; text-transform: uppercase; margin-bottom: 5px; }
         .header-instansi { font-size: 13pt; font-weight: bold; line-height: 1.2; text-transform: uppercase; }
-        .title-ijazah { font-size: 28pt; font-weight: bold; letter-spacing: 15px; text-transform: uppercase; margin: 10px 0 5px 0; }
-        .nomor-ijazah { font-size: 12pt; font-weight: bold; margin-bottom: 15px; }
+        .nomor-ijazah { font-size: 12pt; font-weight: bold; margin-top: 10px; margin-bottom: 15px; }
         
+        /* NARASI EBTAQ */
         .narasi-ebtaq { font-size: 12.5pt; line-height: 1.5; text-align: justify; text-align-last: center; margin-bottom: 15px; }
         .nama-santri { font-size: 22pt; font-weight: bold; text-decoration: underline; margin: 10px 0; text-transform: uppercase; }
 
+        /* IDENTITAS */
         .identitas-table { margin: 5px auto; width: 100%; font-size: 13pt; line-height: 1.6; border-collapse: collapse; }
         .identitas-table td { vertical-align: top; padding: 2px 0; text-align: left; }
         .label-id { width: 170px; font-weight: bold; }
@@ -62,11 +64,19 @@
             align-items: flex-end; text-align: center; font-size: 11.5pt;
         }
 
+        /* TITIMANGSA BOX (FORMAT DEMAK + 2 BARIS GARIS TENGAH) */
+        .titimangsa-container {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12pt; margin-bottom: 8px;
+        }
+        .kota-label { margin-right: 8px; }
+        .tgl-stack { display: flex; flex-direction: column; align-items: center; }
+        .line-divider { width: 100%; height: 1px; background: #000; margin: 2px 0; }
+
         .photo-frame-98 { width: 2.95cm; height: 3.95cm; border: 0.5pt solid #000; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
         .photo-internal-80 { width: 2.4cm; height: 3.2cm; overflow: hidden; }
         .photo-internal-80 img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
 
-        .titimangsa-box { font-size: 12pt; margin-bottom: 5px; text-align: center; line-height: 1.3; }
         .sign-title { min-height: 3em; display: flex; align-items: flex-end; justify-content: center; }
         .sign-name { font-size: 12pt; font-weight: bold; margin-top: 70px; text-decoration: underline; }
 
@@ -85,7 +95,7 @@
     <div class="row">
         <div class="group">
             <label>1. Upload CSV (ViewData)</label>
-            <input type="file" id="csv-file" accept=".csv" onchange="handleCSV()">
+            <input type="file" id="csv-file" accept=".csv" onchange="readCSV()">
         </div>
         <div class="group">
             <label>2. No. Urut Mulai</label>
@@ -128,20 +138,20 @@
     <div class="verify-box" id="verify-area" style="display:none;">
         <label>5. Verifikasi Lembaga & Penandatangan</label>
         <div class="row" style="margin-top:8px;">
-            <select id="sel-lembaga" onchange="loadLembagaData()" style="flex:1.5; border:2px solid #007bff;"></select>
+            <select id="sel-lembaga" onchange="loadMem()" style="flex:1.5; border:2px solid #007bff;"></select>
         </div>
         <div class="row">
             <div class="group">
                 <label>Koreksi Nama Lembaga</label>
-                <input id="v-alias" placeholder="Nama Lembaga untuk Ijazah" oninput="saveLMap()">
+                <input id="v-alias" placeholder="Nama untuk di Ijazah" oninput="saveMem()">
             </div>
             <div class="group">
                 <label>Nama Kepala Lembaga</label>
-                <input id="v-head" placeholder="Nama Kepala" oninput="saveLMap()">
+                <input id="v-head" placeholder="Nama Kepala" oninput="saveMem()">
             </div>
             <div class="group">
                 <label>Nama Korcam</label>
-                <input id="v-korcam" placeholder="Nama Korcam" oninput="saveLMap()">
+                <input id="v-korcam" placeholder="Nama Korcam" oninput="saveMem()">
             </div>
         </div>
     </div>
@@ -153,7 +163,7 @@
 
 <script>
     let dbCSV = [];
-    let lMemory = JSON.parse(localStorage.getItem('ebtaq_final_map')) || {};
+    let lMemory = JSON.parse(localStorage.getItem('ebtaq_final_fix_v8')) || {};
     const LOKASI_EBTAQ = "TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak";
 
     window.onload = () => {
@@ -164,7 +174,7 @@
         });
     };
 
-    function handleCSV() {
+    function readCSV() {
         const file = document.getElementById('csv-file').files[0];
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -176,42 +186,42 @@
                 cols.forEach((v, i) => { if(headers[i]) obj[headers[i]] = v; });
                 return obj;
             });
-            const schools = [...new Set(dbCSV.map(d => d['ASAL LEMBAGA']))].sort();
+            const sch = [...new Set(dbCSV.map(d => d['ASAL LEMBAGA']))].sort();
             const sel = document.getElementById('sel-lembaga');
             sel.innerHTML = '<option value="">-- Pilih Lembaga --</option>';
-            schools.forEach(s => { sel.innerHTML += `<option value="${s}">${s}</option>`; });
+            sch.forEach(s => { sel.innerHTML += `<option value="${s}">${s}</option>`; });
             document.getElementById('verify-area').style.display = 'block';
         };
         reader.readAsText(file);
     }
 
-    function loadLembagaData() {
-        const key = document.getElementById('sel-lembaga').value;
-        const d = lMemory[key] || { alias: key, head: "", korcam: "" };
+    function loadMem() {
+        const k = document.getElementById('sel-lembaga').value;
+        const d = lMemory[k] || { alias: k, head: "", korcam: "" };
         document.getElementById('v-alias').value = d.alias;
         document.getElementById('v-head').value = d.head;
         document.getElementById('v-korcam').value = d.korcam;
     }
 
-    function saveLMap() {
-        const key = document.getElementById('sel-lembaga').value;
-        if(!key) return;
-        lMemory[key] = {
+    function saveMem() {
+        const k = document.getElementById('sel-lembaga').value;
+        if(!k) return;
+        lMemory[k] = {
             alias: document.getElementById('v-alias').value,
             head: document.getElementById('v-head').value,
             korcam: document.getElementById('v-korcam').value
         };
-        localStorage.setItem('ebtaq_final_map', JSON.stringify(lMemory));
+        localStorage.setItem('ebtaq_final_fix_v8', JSON.stringify(lMemory));
     }
 
-    function formatMasehi(dateStr) {
-        if(!dateStr) return "";
+    function formatMasehi(ds) {
+        if(!ds) return "";
         const b = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const d = new Date(dateStr);
+        const d = new Date(ds);
         return `${d.getDate()} ${b[d.getMonth()]} ${d.getFullYear()} M`;
     }
 
-    function formatCSVDate(s) {
+    function formatLahir(s) {
         if(!s || s === "-") return "-";
         const b = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const p = s.split('/');
@@ -229,39 +239,41 @@
         const out = document.getElementById('output');
         out.innerHTML = '';
         let urut = parseInt(document.getElementById('cfg-no-start').value);
-        const hThn = document.getElementById('h-thn').value;
-        const hFull = `${document.getElementById('h-tgl').value} ${document.getElementById('h-bln').value} ${hThn} H`;
-        const mFull = formatMasehi(document.getElementById('m-date').value);
-        const memory = lMemory[sch] || { alias: sch, head: "..................", korcam: "" };
+        const hT = document.getElementById('h-tgl').value;
+        const hB = document.getElementById('h-bln').value;
+        const hY = document.getElementById('h-thn').value;
+        const hF = `${hT} ${hB} ${hY} H`;
+        const mF = formatMasehi(document.getElementById('m-date').value);
+        const mem = lMemory[sch] || { alias: sch, head: "..................", korcam: "" };
 
         const list = dbCSV.filter(d => d['ASAL LEMBAGA'] === sch && d['L / TL'] === "L");
 
         list.forEach(d => {
-            const no = `I . ${hThn} . 02.30 . E . ${String(urut).padStart(4, '0')}`;
+            const no = `I . ${hY} . 02.30 . E . ${String(urut).padStart(4, '0')}`;
             let wali = (d['NAMA AYAH'] && d['NAMA AYAH'] !== "-") ? d['NAMA AYAH'] : d['NAMA IBU'];
             const fUrl = d['IMAGE'] || d['FOTO'] || "";
             const id = fUrl.includes('id=') ? fUrl.match(/id=([a-zA-Z0-9_-]+)/)[1] : null;
             const img = id ? `<img src="https://drive.google.com/thumbnail?id=${id}&sz=w400">` : `3x4`;
 
-            const page = document.createElement('div');
-            page.className = 'page-canvas';
-            page.innerHTML = `
+            const p = document.createElement('div');
+            p.className = 'page-canvas';
+            p.innerHTML = `
                 <div class="printable-area">
                     <div class="content-overlay">
-                        <div class="header-instansi">TAMAN PENDIDIKAN AL-QUR'AN<br>METODE QIROATI<br>KOORDINATOR CABANG DEMAK</div>
                         <div class="title-ijazah">I J A Z A H</div>
+                        <div class="header-instansi">TAMAN PENDIDIKAN AL-QUR'AN<br>METODE QIROATI<br>KOORDINATOR CABANG DEMAK</div>
                         <div class="nomor-ijazah">Nomor: ${no}</div>
 
                         <div class="narasi-ebtaq">
-                            Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ), pada tanggal ${hFull} / ${mFull} yang diselenggarakan di ${LOKASI_EBTAQ}, maka kami memutuskan bahwa santri yang bernama:
+                            Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ), pada tanggal ${hF} / ${mF} yang diselenggarakan di ${LOKASI_EBTAQ}, maka kami memutuskan bahwa santri yang bernama:
                         </div>
 
                         <div class="nama-santri">${d['NAMA LENGKAP']}</div>
 
                         <table class="identitas-table">
                             <tr><td class="label-id">Bin / Binti</td><td class="sep-id">:</td><td>${wali.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</td></tr>
-                            <tr><td class="label-id">Tempat, Tgl. Lahir</td><td class="sep-id">:</td><td>${d['TEMPAT LAHIR']}, ${formatCSVDate(d['TANGGAL LAHIR'])}</td></tr>
-                            <tr><td class="label-id">Asal Lembaga / TPQ</td><td class="sep-id">:</td><td style="text-transform:none;">${memory.alias}</td></tr>
+                            <tr><td class="label-id">Tempat, Tgl. Lahir</td><td class="sep-id">:</td><td>${d['TEMPAT LAHIR']}, ${formatLahir(d['TANGGAL LAHIR'])}</td></tr>
+                            <tr><td class="label-id">Asal Lembaga / TPQ</td><td class="sep-id">:</td><td style="text-transform:none;">${mem.alias}</td></tr>
                         </table>
 
                         <div class="pernyataan">
@@ -270,12 +282,19 @@
 
                         <div class="footer-grid">
                             <div class="sign-block">
-                                <div class="sign-title">Kepala Lembaga<br>${memory.alias}</div>
-                                <div class="sign-name">${memory.head}</div>
+                                <div class="sign-title">Kepala Lembaga<br>${mem.alias}</div>
+                                <div class="sign-name">${mem.head}</div>
                             </div>
                             <div class="photo-frame-98"><div class="photo-internal-80">${img}</div></div>
                             <div class="sign-block">
-                                <div class="titimangsa-box">Demak, ${hFull}<br>${mFull}</div>
+                                <div class="titimangsa-container">
+                                    <div class="kota-label">Demak,</div>
+                                    <div class="tgl-stack">
+                                        <div>${hF}</div>
+                                        <div class="line-divider"></div>
+                                        <div>${mF}</div>
+                                    </div>
+                                </div>
                                 <div class="sign-title" style="font-size:9pt">Penanggung Jawab Tashih Korcab Qiroati Demak,</div>
                                 <div class="sign-name">H.M. Warosy Abdullah, A.H.</div>
                             </div>
@@ -283,7 +302,7 @@
                     </div>
                 </div>
             `;
-            out.appendChild(page);
+            out.appendChild(p);
             urut++;
         });
         localStorage.setItem('cfg-no-start', urut);
