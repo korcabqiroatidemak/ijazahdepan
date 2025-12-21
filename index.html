@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>GENERATOR IJAZAH EBTAQ - FIX FINAL LAYOUT</title>
+    <title>GENERATOR IJAZAH EBTAQ - FINAL REVISI LAYOUT</title>
     <style>
         @page { size: 210mm 330mm; margin: 0; }
         body { margin: 0; padding: 0; background-color: #525659; font-family: "Times New Roman", serif; }
@@ -35,17 +35,17 @@
         }
         .content-overlay {
             position: relative; width: 100%; height: 100%;
-            padding: 8.6cm 2.2cm 1.5cm 2.2cm; /* Margin 8.6cm untuk Hologram */
+            padding: 8.6cm 2.2cm 1.5cm 2.2cm; 
             box-sizing: border-box; text-align: center;
             display: flex; flex-direction: column;
         }
 
-        /* HEADER SECTION (URUTAN BARU) */
+        /* HEADER SECTION */
         .title-ijazah { font-size: 28pt; font-weight: bold; letter-spacing: 15px; text-transform: uppercase; margin-bottom: 5px; }
         .header-instansi { font-size: 13pt; font-weight: bold; line-height: 1.2; text-transform: uppercase; }
         .nomor-ijazah { font-size: 12pt; font-weight: bold; margin-top: 10px; margin-bottom: 15px; }
         
-        /* NARASI EBTAQ */
+        /* NARASI */
         .narasi-ebtaq { font-size: 12.5pt; line-height: 1.5; text-align: justify; text-align-last: center; margin-bottom: 15px; }
         .nama-santri { font-size: 22pt; font-weight: bold; text-decoration: underline; margin: 10px 0; text-transform: uppercase; }
 
@@ -57,17 +57,17 @@
 
         .pernyataan { font-size: 12pt; margin-top: 15px; line-height: 1.5; text-align: justify; }
 
-        /* FOOTER SIGNATURE */
+        /* FOOTER SIGNATURE GRID */
         .footer-grid {
             margin-top: auto; padding-bottom: 1.2cm;
-            display: grid; grid-template-columns: 1fr 110px 1fr;
-            align-items: flex-end; text-align: center; font-size: 11.5pt;
+            display: grid; grid-template-columns: 1.2fr 110px 1.2fr;
+            align-items: flex-end; text-align: center; font-size: 12pt;
         }
 
-        /* TITIMANGSA BOX (FORMAT DEMAK + 2 BARIS GARIS TENGAH) */
+        /* TITIMANGSA BOX */
         .titimangsa-container {
             display: flex; align-items: center; justify-content: center;
-            font-size: 12pt; margin-bottom: 8px;
+            font-size: 12pt; margin-bottom: 5px;
         }
         .kota-label { margin-right: 8px; }
         .tgl-stack { display: flex; flex-direction: column; align-items: center; }
@@ -77,7 +77,8 @@
         .photo-internal-80 { width: 2.4cm; height: 3.2cm; overflow: hidden; }
         .photo-internal-80 img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
 
-        .sign-title { min-height: 3em; display: flex; align-items: flex-end; justify-content: center; }
+        /* SIGNATURE TEXT */
+        .sign-title { min-height: 3.5em; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; line-height: 1.2; }
         .sign-name { font-size: 12pt; font-weight: bold; margin-top: 70px; text-decoration: underline; }
 
         @media print {
@@ -94,7 +95,7 @@
     
     <div class="row">
         <div class="group">
-            <label>1. Upload CSV (ViewData)</label>
+            <label>1. Upload CSV</label>
             <input type="file" id="csv-file" accept=".csv" onchange="readCSV()">
         </div>
         <div class="group">
@@ -136,23 +137,10 @@
     </div>
 
     <div class="verify-box" id="verify-area" style="display:none;">
-        <label>5. Verifikasi Lembaga & Penandatangan</label>
+        <label>5. Verifikasi Lembaga & Nama Kepala</label>
         <div class="row" style="margin-top:8px;">
-            <select id="sel-lembaga" onchange="loadMem()" style="flex:1.5; border:2px solid #007bff;"></select>
-        </div>
-        <div class="row">
-            <div class="group">
-                <label>Koreksi Nama Lembaga</label>
-                <input id="v-alias" placeholder="Nama untuk di Ijazah" oninput="saveMem()">
-            </div>
-            <div class="group">
-                <label>Nama Kepala Lembaga</label>
-                <input id="v-head" placeholder="Nama Kepala" oninput="saveMem()">
-            </div>
-            <div class="group">
-                <label>Nama Korcam</label>
-                <input id="v-korcam" placeholder="Nama Korcam" oninput="saveMem()">
-            </div>
+            <select id="sel-lembaga" onchange="loadVerifyData()" style="flex:1.5; border:2px solid #007bff;"></select>
+            <input id="v-head" placeholder="Nama Kepala Lembaga" oninput="saveVerifyData()">
         </div>
     </div>
 
@@ -163,8 +151,8 @@
 
 <script>
     let dbCSV = [];
-    let lMemory = JSON.parse(localStorage.getItem('ebtaq_final_fix_v8')) || {};
-    const LOKASI_EBTAQ = "TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak";
+    let lMemory = JSON.parse(localStorage.getItem('ebtaq_heads_v9')) || {};
+    const LOKASI_FIX = "TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak";
 
     window.onload = () => {
         const today = new Date().toISOString().split('T')[0];
@@ -186,32 +174,26 @@
                 cols.forEach((v, i) => { if(headers[i]) obj[headers[i]] = v; });
                 return obj;
             });
-            const sch = [...new Set(dbCSV.map(d => d['ASAL LEMBAGA']))].sort();
+            const unique = [...new Set(dbCSV.map(d => d['ASAL LEMBAGA']))].sort();
             const sel = document.getElementById('sel-lembaga');
             sel.innerHTML = '<option value="">-- Pilih Lembaga --</option>';
-            sch.forEach(s => { sel.innerHTML += `<option value="${s}">${s}</option>`; });
+            unique.forEach(s => { sel.innerHTML += `<option value="${s}">${s}</option>`; });
             document.getElementById('verify-area').style.display = 'block';
         };
         reader.readAsText(file);
     }
 
-    function loadMem() {
+    function loadVerifyData() {
         const k = document.getElementById('sel-lembaga').value;
-        const d = lMemory[k] || { alias: k, head: "", korcam: "" };
-        document.getElementById('v-alias').value = d.alias;
-        document.getElementById('v-head').value = d.head;
-        document.getElementById('v-korcam').value = d.korcam;
+        document.getElementById('v-head').value = lMemory[k] || "";
     }
 
-    function saveMem() {
+    function saveVerifyData() {
         const k = document.getElementById('sel-lembaga').value;
-        if(!k) return;
-        lMemory[k] = {
-            alias: document.getElementById('v-alias').value,
-            head: document.getElementById('v-head').value,
-            korcam: document.getElementById('v-korcam').value
-        };
-        localStorage.setItem('ebtaq_final_fix_v8', JSON.stringify(lMemory));
+        if(k) {
+            lMemory[k] = document.getElementById('v-head').value;
+            localStorage.setItem('ebtaq_heads_v9', JSON.stringify(lMemory));
+        }
     }
 
     function formatMasehi(ds) {
@@ -239,12 +221,9 @@
         const out = document.getElementById('output');
         out.innerHTML = '';
         let urut = parseInt(document.getElementById('cfg-no-start').value);
-        const hT = document.getElementById('h-tgl').value;
-        const hB = document.getElementById('h-bln').value;
         const hY = document.getElementById('h-thn').value;
-        const hF = `${hT} ${hB} ${hY} H`;
+        const hF = `${document.getElementById('h-tgl').value} ${document.getElementById('h-bln').value} ${hY} H`;
         const mF = formatMasehi(document.getElementById('m-date').value);
-        const mem = lMemory[sch] || { alias: sch, head: "..................", korcam: "" };
 
         const list = dbCSV.filter(d => d['ASAL LEMBAGA'] === sch && d['L / TL'] === "L");
 
@@ -265,7 +244,7 @@
                         <div class="nomor-ijazah">Nomor: ${no}</div>
 
                         <div class="narasi-ebtaq">
-                            Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ), pada tanggal ${hF} / ${mF} yang diselenggarakan di ${LOKASI_EBTAQ}, maka kami memutuskan bahwa santri yang bernama:
+                            Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ), pada tanggal ${hF} / ${mF} yang diselenggarakan di ${LOKASI_FIX}, maka kami memutuskan bahwa santri yang bernama:
                         </div>
 
                         <div class="nama-santri">${d['NAMA LENGKAP']}</div>
@@ -273,7 +252,7 @@
                         <table class="identitas-table">
                             <tr><td class="label-id">Bin / Binti</td><td class="sep-id">:</td><td>${wali.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</td></tr>
                             <tr><td class="label-id">Tempat, Tgl. Lahir</td><td class="sep-id">:</td><td>${d['TEMPAT LAHIR']}, ${formatLahir(d['TANGGAL LAHIR'])}</td></tr>
-                            <tr><td class="label-id">Asal Lembaga / TPQ</td><td class="sep-id">:</td><td style="text-transform:none;">${mem.alias}</td></tr>
+                            <tr><td class="label-id">Asal Lembaga / TPQ</td><td class="sep-id">:</td><td style="text-transform:none;">${sch}</td></tr>
                         </table>
 
                         <div class="pernyataan">
@@ -282,8 +261,8 @@
 
                         <div class="footer-grid">
                             <div class="sign-block">
-                                <div class="sign-title">Kepala Lembaga<br>${mem.alias}</div>
-                                <div class="sign-name">${mem.head}</div>
+                                <div class="sign-title">Kepala Lembaga<br>${sch}</div>
+                                <div class="sign-name">${lMemory[sch] || '..................'}</div>
                             </div>
                             <div class="photo-frame-98"><div class="photo-internal-80">${img}</div></div>
                             <div class="sign-block">
@@ -295,7 +274,10 @@
                                         <div>${mF}</div>
                                     </div>
                                 </div>
-                                <div class="sign-title" style="font-size:9pt">Penanggung Jawab Tashih Korcab Qiroati Demak,</div>
+                                <div class="sign-title">
+                                    <span>Penanggung Jawab Tashih</span>
+                                    <span>Korcab Qiroati Demak,</span>
+                                </div>
                                 <div class="sign-name">H.M. Warosy Abdullah, A.H.</div>
                             </div>
                         </div>
