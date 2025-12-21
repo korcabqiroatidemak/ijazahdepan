@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>IJAZAH GENERATOR EBTAQ - FINAL MASTER</title>
+    <title>IJAZAH EBTAQ - FINAL REVISI</title>
     <style>
         @page { size: 210mm 330mm; margin: 0; }
         body { margin: 0; padding: 0; background-color: #525659; font-family: "Times New Roman", serif; }
@@ -12,25 +12,19 @@
             background: #fff; width: 210mm; margin: 20px auto;
             padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .control-panel h3 { margin: 0 0 15px; color: #007bff; font-family: Arial; border-bottom: 2px solid #eee; padding-bottom: 5px; }
         .row { display: flex; gap: 15px; margin-bottom: 15px; }
         .group { flex: 1; display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 11px; font-weight: bold; font-family: Arial; color: #555; }
         input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
         
-        /* Verification Box */
         .verify-box { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-        .verify-box h4 { margin: 0 0 10px; font-size: 13px; color: #333; }
-
         .btn { width: 100%; padding: 14px; background: #28a745; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 14px; }
-        .btn:hover { background: #218838; }
 
         /* ================= KANVAS IJAZAH ================= */
         .page-canvas {
             width: 210mm; height: 330mm; margin: 10mm auto;
             background-color: white; position: relative;
             box-sizing: border-box; overflow: hidden;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             page-break-after: always;
         }
 
@@ -42,31 +36,32 @@
 
         .content-overlay {
             position: relative; width: 100%; height: 100%;
-            /* Margin atas 9.1 cm sesuai diskusi hologram */
-            padding: 9.1cm 2.5cm 1.5cm 2.5cm; 
+            padding: 9.1cm 2.2cm 1.5cm 2.2cm; /* Start dari 9.1cm untuk Hologram */
             box-sizing: border-box; text-align: center;
             display: flex; flex-direction: column;
         }
 
-        .title-ijazah { font-size: 32pt; font-weight: bold; margin-bottom: 5px; }
-        .nomor-ijazah { font-size: 12pt; margin-bottom: 25px; }
+        /* HEADER SECTION */
+        .instansi-header { font-size: 14pt; font-weight: bold; line-height: 1.2; margin-bottom: 5px; }
+        .title-ijazah { font-size: 28pt; font-weight: bold; margin-top: 5px; }
+        .nomor-ijazah { font-size: 12pt; margin-bottom: 15px; }
         
-        .pembuka { font-size: 12.5pt; line-height: 1.4; margin-bottom: 20px; text-align: center; }
+        /* PARAGRAF EBTAQ */
+        .narasi-ebtaq { font-size: 12.5pt; line-height: 1.4; text-align: center; margin-bottom: 15px; }
 
-        /* Data Santri */
-        .nama-lengkap { font-size: 22pt; font-weight: bold; text-decoration: underline; margin: 15px 0; text-transform: uppercase; }
+        .nama-lengkap { font-size: 22pt; font-weight: bold; text-decoration: underline; margin: 10px 0; text-transform: uppercase; }
         
-        .identitas-box { margin: 0 auto; width: 100%; text-align: left; font-size: 12.5pt; line-height: 1.6; }
+        .identitas-box { margin: 10px auto; width: 100%; text-align: left; font-size: 12.5pt; line-height: 1.6; }
         .row-id { display: flex; margin-bottom: 4px; }
-        .label-id { width: 160px; font-weight: bold; }
+        .label-id { width: 170px; font-weight: bold; }
         .sep-id { width: 20px; text-align: center; }
         .val-id { flex: 1; }
 
-        .pernyataan { font-size: 12.5pt; margin-top: 25px; line-height: 1.5; text-align: justify; }
+        .pernyataan-lulus { font-size: 12.5pt; margin-top: 15px; line-height: 1.5; text-align: justify; }
 
-        /* BOTTOM SECTION (TTD & FOTO) */
+        /* BOTTOM SECTION */
         .bottom-section {
-            margin-top: auto; padding-bottom: 1cm;
+            margin-top: auto; padding-bottom: 1.2cm;
             display: grid; grid-template-columns: 1fr 100px 1fr;
             align-items: flex-end; text-align: center; font-size: 12pt;
         }
@@ -75,12 +70,11 @@
             width: 2.4cm; height: 3.2cm; /* 80% of 3x4 */
             border: 1px solid #ccc; margin: 0 auto;
             display: flex; align-items: center; justify-content: center;
-            opacity: 0.4; overflow: hidden;
+            opacity: 0.3; overflow: hidden;
         }
         .foto-watermark img { width: 100%; height: 100%; object-fit: cover; }
 
-        .nama-pejabat { font-size: 12.5pt; font-weight: bold; margin-top: 70px; text-decoration: underline; }
-        .jabatan { font-size: 10pt; line-height: 1.2; }
+        .nama-pejabat { font-size: 12.5pt; font-weight: bold; margin-top: 65px; text-decoration: underline; }
 
         @media print {
             body { background: none; padding: 0; }
@@ -92,40 +86,41 @@
 <body>
 
 <div class="control-panel">
-    <h3>IJAZAH GENERATOR - BATCH SYSTEM</h3>
+    <h3>KONFIGURASI IJAZAH EBTAQ</h3>
     
     <div class="row">
         <div class="group">
-            <label>1. Upload CSV (ViewData)</label>
+            <label>CSV ViewData</label>
             <input type="file" id="csv-input" accept=".csv" onchange="handleCSV()">
         </div>
         <div class="group">
-            <label>2. Tahun Hijriyah (No. Seri)</label>
-            <input id="cfg-thn-seri" oninput="saveCfg()" placeholder="Contoh: 1446">
+            <label>Tahun Hijriah (No. Seri)</label>
+            <input id="cfg-thn-seri" oninput="saveCfg()" placeholder="1446">
         </div>
         <div class="group">
-            <label>3. No. Urut Mulai</label>
+            <label>Kode Suffix (E/I)</label>
+            <input id="cfg-suffix" oninput="saveCfg()" value="E">
+        </div>
+        <div class="group">
+            <label>No. Urut Mulai</label>
             <input type="number" id="cfg-start-no" oninput="saveCfg()" value="1">
         </div>
     </div>
 
     <div class="verify-box" id="verify-area" style="display:none;">
-        <h4>4. Verifikasi Data Lembaga (Pilih dari Daftar)</h4>
         <div class="row">
             <div class="group">
+                <label>Pilih Lembaga untuk Verifikasi</label>
                 <select id="drop-lembaga" onchange="loadLembagaData()">
                     <option value="">-- Pilih Lembaga --</option>
                 </select>
             </div>
             <div class="group">
-                <input id="v-nama-lembaga" placeholder="Koreksi Nama Lembaga" oninput="updateLembagaMap()">
-            </div>
-        </div>
-        <div class="row">
-            <div class="group">
-                <input id="v-kepala" placeholder="Nama Kepala Lembaga" oninput="updateLembagaMap()">
+                <label>Nama Kepala Lembaga</label>
+                <input id="v-kepala" placeholder="Nama Kepala" oninput="updateLembagaMap()">
             </div>
             <div class="group">
+                <label>Nama Korcam</label>
                 <input id="v-korcam" placeholder="Nama Korcam" oninput="updateLembagaMap()">
             </div>
         </div>
@@ -133,53 +128,63 @@
 
     <div class="row">
         <div class="group">
-            <label>5. Titimangsa Hijriyah</label>
-            <input id="cfg-tgl-h" oninput="saveCfg()" placeholder="Contoh: 27 Rojab 1446 H">
+            <label>Tanggal Pelaksanaan EBTAQ (H)</label>
+            <input id="ebtaq-h" oninput="saveCfg()" placeholder="12 Rojab 1446 H">
         </div>
         <div class="group">
-            <label>6. Titimangsa Masehi</label>
-            <input id="cfg-tgl-m" oninput="saveCfg()" placeholder="Contoh: 27 Januari 2025 M">
+            <label>Tanggal Pelaksanaan EBTAQ (M)</label>
+            <input id="ebtaq-m" oninput="saveCfg()" placeholder="12 Januari 2025 M">
+        </div>
+        <div class="group">
+            <label>Tempat Pelaksanaan EBTAQ</label>
+            <input id="ebtaq-lok" oninput="saveCfg()" value="TPQ Bustanu Usysyaqil Qur'an Betengan Bintoro Demak">
         </div>
     </div>
 
-    <button class="btn" onclick="generate()">GENERATE IJAZAH SEKARANG</button>
+    <div class="row">
+        <div class="group">
+            <label>Titimangsa Hijriyah</label>
+            <input id="cfg-tgl-h" oninput="saveCfg()" placeholder="27 Rojab 1446 H">
+        </div>
+        <div class="group">
+            <label>Titimangsa Masehi</label>
+            <input id="cfg-tgl-m" oninput="saveCfg()" placeholder="27 Januari 2025 M">
+        </div>
+    </div>
+
+    <button class="btn" onclick="generate()">CETAK IJAZAH (FILTER LULUS)</button>
 </div>
 
 <div id="output"></div>
 
 <script>
     let csvData = [];
-    let lembagaMap = JSON.parse(localStorage.getItem('ebtaq_lembaga_map')) || {};
+    let lembagaMap = JSON.parse(localStorage.getItem('ijazah_lembaga_map')) || {};
 
-    // Load History Global
     window.onload = () => {
-        ['cfg-thn-seri', 'cfg-start-no', 'cfg-tgl-h', 'cfg-tgl-m'].forEach(id => {
+        ['cfg-thn-seri', 'cfg-suffix', 'cfg-start-no', 'cfg-tgl-h', 'cfg-tgl-m', 'ebtaq-h', 'ebtaq-m', 'ebtaq-lok'].forEach(id => {
             if(localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
         });
     };
 
     function saveCfg() {
-        ['cfg-thn-seri', 'cfg-start-no', 'cfg-tgl-h', 'cfg-tgl-m'].forEach(id => {
+        ['cfg-thn-seri', 'cfg-suffix', 'cfg-start-no', 'cfg-tgl-h', 'cfg-tgl-m', 'ebtaq-h', 'ebtaq-m', 'ebtaq-lok'].forEach(id => {
             localStorage.setItem(id, document.getElementById(id).value);
         });
     }
 
-    // --- STEP 1: CSV Handling ---
     function handleCSV() {
         const file = document.getElementById('csv-input').files[0];
         const reader = new FileReader();
         reader.onload = (e) => {
             const lines = e.target.result.split('\n').filter(l => l.trim() !== "");
             const headers = lines[0].split(';').map(h => h.replace(/"/g, '').trim().toUpperCase());
-            
             csvData = lines.slice(1).map(line => {
                 const cols = line.split(';').map(c => c.replace(/"/g, '').trim());
                 let obj = {};
                 cols.forEach((v, i) => obj[headers[i]] = v);
                 return obj;
             });
-
-            // Extract Unique Institutions for Dropdown
             const list = [...new Set(csvData.map(d => d['ASAL LEMBAGA']))].sort();
             const drop = document.getElementById('drop-lembaga');
             drop.innerHTML = '<option value="">-- Pilih Lembaga --</option>';
@@ -193,12 +198,10 @@
         reader.readAsText(file);
     }
 
-    // --- STEP 2: Lembaga Mapping ---
     function loadLembagaData() {
         const key = document.getElementById('drop-lembaga').value;
         if(!key) return;
-        const data = lembagaMap[key] || { corrected: key, kepala: "", korcam: "" };
-        document.getElementById('v-nama-lembaga').value = data.corrected;
+        const data = lembagaMap[key] || { kepala: "", korcam: "" };
         document.getElementById('v-kepala').value = data.kepala;
         document.getElementById('v-korcam').value = data.korcam;
     }
@@ -207,14 +210,12 @@
         const key = document.getElementById('drop-lembaga').value;
         if(!key) return;
         lembagaMap[key] = {
-            corrected: document.getElementById('v-nama-lembaga').value,
             kepala: document.getElementById('v-kepala').value,
             korcam: document.getElementById('v-korcam').value
         };
-        localStorage.setItem('ebtaq_lembaga_map', JSON.stringify(lembagaMap));
+        localStorage.setItem('ijazah_lembaga_map', JSON.stringify(lembagaMap));
     }
 
-    // --- HELPER FORMATTING ---
     function toTitleCase(str) {
         if(!str) return "-";
         return str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
@@ -223,91 +224,80 @@
     function formatFullDate(str) {
         if(!str) return "-";
         const bln = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        // Handle format dd/mm/yyyy
         const parts = str.split('/');
-        if(parts.length === 3) {
-            const d = parseInt(parts[0]);
-            const m = parseInt(parts[1]) - 1;
-            const y = parts[2];
-            return `${d} ${bln[m]} ${y}`;
-        }
+        if(parts.length === 3) return `${parseInt(parts[part[0]])} ${bln[parseInt(parts[1])-1]} ${parts[2]}`;
         return str;
     }
 
-    // --- STEP 3: Generation ---
     function generate() {
         const out = document.getElementById('output');
         out.innerHTML = '';
-        
         let currentNo = parseInt(document.getElementById('cfg-start-no').value);
         const thnSeri = document.getElementById('cfg-thn-seri').value;
+        const sfx = document.getElementById('cfg-suffix').value;
         const tglH = document.getElementById('cfg-tgl-h').value;
         const tglM = document.getElementById('cfg-tgl-m').value;
+        const eH = document.getElementById('ebtaq-h').value;
+        const eM = document.getElementById('ebtaq-m').value;
+        const eLok = document.getElementById('ebtaq-lok').value;
 
-        // Filter Hanya "L" (Lulus)
         const lulus = csvData.filter(d => d['L / TL'] === "L");
 
         lulus.forEach(santri => {
-            const oriLembaga = santri['ASAL LEMBAGA'];
-            const lData = lembagaMap[oriLembaga] || { corrected: oriLembaga, kepala: "", korcam: "" };
+            const lData = lembagaMap[santri['ASAL LEMBAGA']] || { kepala: "", korcam: "" };
+            const noIjazah = `I . ${thnSeri} . 02.30 . ${sfx} . ${String(currentNo).padStart(4, '0')}`;
             
-            const noIjazah = `I . ${thnSeri} . 02.30 . E . ${String(currentNo).padStart(3, '0')}`;
-            
+            // LOGIKA FALLBACK AYAH -> IBU
+            let wali = (santri['Nama Ayah'] && santri['Nama Ayah'] !== '-') ? santri['Nama Ayah'] : santri['Nama Ibu'];
+
             const page = document.createElement('div');
             page.className = 'page-canvas';
             
-            // Format Foto URL
             const fUrl = santri['IMAGE'] || santri['FOTO'];
             const idDrive = fUrl && fUrl.includes('id=') ? fUrl.match(/id=([a-zA-Z0-9_-]+)/)[1] : null;
-            const imgHtml = idDrive ? `<img src="https://lh3.googleusercontent.com/d/$${idDrive}">` : `FOTO<br>3x4`;
+            const imgHtml = idDrive ? `<img src="https://lh3.googleusercontent.com/d/$${idDrive}">` : `FOTO 3x4`;
 
             page.innerHTML = `
                 <div class="printable-area">
                     <div class="content-overlay">
+                        <div class="instansi-header">TAMAN PENDIDIKAN AL-QUR'AN<br>METODE QIROATI<br>KOORDINATOR CABANG DEMAK</div>
                         <div class="title-ijazah">IJAZAH</div>
                         <div class="nomor-ijazah">Nomor: ${noIjazah}</div>
 
-                        <div class="pembuka">
-                            Koordinator Pendidikan Al-Qur'an Metode Qiraati Cabang Demak, berdasarkan hasil Evaluasi Belajar Tahap Akhir Qiraati (EBTAQ) memberikan Ijazah kepada:
+                        <div class="narasi-ebtaq">
+                            Setelah mengadakan Evaluasi Belajar Tahap Akhir Qiroati (EBTAQ), pada tanggal ${eH} / ${eM}.<br>
+                            Yang diselenggarakan di ${eLok}.<br>
+                            Maka kami memutuskan bahwa santri yang bernama:
                         </div>
 
                         <div class="nama-lengkap">${santri['Nama Lengkap']}</div>
 
                         <div class="identitas-box">
+                            <div class="row-id"><div class="label-id">Bin / Binti</div><div class="sep-id">:</div><div class="val-id">${toTitleCase(wali)}</div></div>
                             <div class="row-id"><div class="label-id">Tempat, Tgl. Lahir</div><div class="sep-id">:</div><div class="val-id">${santri['TEMPAT LAHIR']}, ${formatFullDate(santri['TANGGAL LAHIR'])}</div></div>
-                            <div class="row-id"><div class="label-id">Bin / Binti</div><div class="sep-id">:</div><div class="val-id">${toTitleCase(santri['Nama Ayah'])}</div></div>
-                            <div class="row-id"><div class="label-id">Asal Lembaga / TPQ</div><div class="sep-id">:</div><div class="val-id" style="text-transform:none;">${lData.corrected}</div></div>
+                            <div class="row-id"><div class="label-id">Asal Lembaga / TPQ</div><div class="sep-id">:</div><div class="val-id" style="text-transform:none;">${santri['ASAL LEMBAGA']}</div></div>
                         </div>
 
-                        <div class="pernyataan">
+                        <div class="pernyataan-lulus">
                             dinyatakan LULUS KHATAM TINGKAT DASAR TPQ Metode Qiraati. Dan sebagai bukti, kepadanya diberikan ijazah ini sesuai dengan peraturan yang berlaku. Semoga Allah SWT memberinya ilmu yang bermanfaat dan berkah. Amin.
                         </div>
 
                         <div class="bottom-section">
-                            <div class="ttd-lembaga">
-                                Kepala Lembaga<br>${lData.corrected},<br><br><br>
-                                <div class="nama-pejabat">${lData.kepala || '..........................'}</div>
-                            </div>
-                            
+                            <div class="ttd-lembaga">Kepala Lembaga<br>${santri['ASAL LEMBAGA']},<br><br><br><div class="nama-pejabat">${lData.kepala || '..........................'}</div></div>
                             <div class="foto-watermark">${imgHtml}</div>
-
                             <div class="ttd-korcab">
                                 Demak, ${tglH}<br>${tglM}<br>
-                                <div style="font-size:10pt">Penanggung Jawab Tashih Korcab Qiroati Demak,</div>
+                                <div style="font-size:9pt">Penanggung Jawab Tashih Korcab Qiroati Demak,</div>
                                 <div class="nama-pejabat">H.M. Warosy Abdullah, A.H.</div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
             out.appendChild(page);
             currentNo++;
         });
-
-        // Save last number
         localStorage.setItem('cfg-start-no', currentNo);
     }
 </script>
-
 </body>
 </html>
