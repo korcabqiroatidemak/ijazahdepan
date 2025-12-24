@@ -30,7 +30,6 @@
             font-size: 13px; box-sizing: border-box; width: 100%; font-family: Arial, sans-serif;
         }
         input[type="file"] { padding: 8px 10px; }
-        /* input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; } */
         
         .verify-box { background: #fdfdfd; border: 2px solid #007bff; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
         .btn-gen { width: 100%; padding: 15px; background: #28a745; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 16px; }
@@ -143,18 +142,20 @@
         </div>
         <div class="group" style="flex:0.7"><label>Tahun Hijriyah</label><input type="number" id="h-thn-input" placeholder="1446"></div>
     </div>
+    
     <div class="verify-box" id="verify-area" style="display:none;">
         <label>5. Verifikasi Lembaga, Kepala, & Korcam</label>
         <div class="row" style="margin-top:8px;">
             <select id="sel-lembaga" onchange="loadMem()" style="flex:1.2"></select>
-            <input id="v-alias" placeholder="Nama Lembaga Baru">
+            <input type="text" id="v-alias" placeholder="Nama Lembaga Baru">
         </div>
         <div class="row">
-            <input id="v-head" placeholder="Nama Kepala Lembaga">
-            <input id="v-korcam" placeholder="Nama Korcam">
-            <button onclick="saveMem()" style="padding:0 20px; cursor:pointer; background:#007bff; color:#fff; border:none; border-radius:4px;">Simpan</button>
+            <input type="text" id="v-head" placeholder="Nama Kepala Lembaga">
+            <input type="text" id="v-korcam" placeholder="Nama Korcam">
+            <button onclick="saveMem()" style="height:40px; padding:0 20px; cursor:pointer; background:#007bff; color:#fff; border:none; border-radius:4px;">Simpan</button>
         </div>
     </div>
+
     <button class="btn-gen" onclick="generate()">GENERATE IJAZAH SEKARANG</button>
 </div>
 
