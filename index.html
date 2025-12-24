@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Ijazah hal. 1 | Identitas</title>
+    <title>Ijazah hal. 1 | Identitas (Final Alert)</title>
     <style>
         /* Ukuran Kertas F4 (215mm x 330mm) */
         @page { size: 215mm 330mm; margin: 0; }
@@ -24,7 +24,7 @@
         .group { flex: 1; display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 11px; font-weight: bold; font-family: Arial; color: #555; }
 
-        /* Tinggi Seragam 40px untuk semua Box */
+        /* Tinggi Seragam 40px untuk semua Box Input & Select */
         input[type="text"], input[type="number"], input[type="date"], input[type="file"], select { 
             height: 40px; padding: 0 10px; border: 1px solid #ccc; border-radius: 4px; 
             font-size: 13px; box-sizing: border-box; width: 100%; font-family: Arial, sans-serif;
@@ -32,7 +32,8 @@
         input[type="file"] { padding: 8px 10px; }
         
         .verify-box { background: #fdfdfd; border: 2px solid #007bff; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-        .btn-gen { width: 100%; padding: 15px; background: #28a745; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 16px; }
+        .btn-gen { width: 100%; padding: 15px; background: #28a745; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 16px; transition: 0.3s; }
+        .btn-gen:hover { background: #218838; }
 
         /* ================= KANVAS IJAZAH ================= */
         .page-canvas {
@@ -114,7 +115,7 @@
 <body>
 
 <div class="control-panel">
-    <h3>Ijazah hal. 1 | Identias</h3>
+    <h3>Ijazah hal. 1 | Identitas</h3>
     <div class="row">
         <div class="group">
             <label>1. Upload File Sumber</label>
@@ -146,8 +147,8 @@
     <div class="verify-box" id="verify-area" style="display:none;">
         <label>5. Verifikasi Lembaga, Kepala, & Korcam</label>
         <div class="row" style="margin-top:8px;">
-            <select id="sel-lembaga" onchange="loadMem()" style="flex:1.2"></select>
-            <input type="text" id="v-alias" placeholder="Nama Lembaga Baru">
+            <select id="sel-lembaga" onchange="loadMem()" style="flex: 3;"></select>
+            <input type="text" id="v-alias" placeholder="Nama Lembaga Baru" style="flex: 1;">
         </div>
         <div class="row">
             <input type="text" id="v-head" placeholder="Nama Kepala Lembaga">
@@ -242,8 +243,16 @@
         const memData = lMemory[targetSch] || { alias: targetSch, head: "..................", korcam: ".................." };
 
         let currentSeq = document.getElementById('cfg-no-start').value ? parseInt(document.getElementById('cfg-no-start').value) : null;
+        
+        // Filter Data (Hanya yang Lulus "L")
         const listToPrint = dbCSV.filter(d => d['ASAL LEMBAGA'] === targetSch && d['L / TL'] === "L");
         const total = listToPrint.length;
+
+        // FIX 2: LOGIKA POP-UP PERINGATAN / SUKSES
+        if (total === 0) {
+            alert(`MOHON MAAF!\n\nTidak ada peserta yang terdata LULUS ("L") pada lembaga:\n${targetSch}\n\nSilakan cek file CSV Anda kembali.`);
+            return; // Hentikan proses agar halaman tidak kosong
+        }
 
         listToPrint.forEach((d, index) => {
             let rawNo = currentSeq !== null ? currentSeq : (d['NO.'] || d['NO'] || d['No.'] || "0000");
@@ -296,6 +305,11 @@
             out.appendChild(page);
             if(currentSeq !== null) currentSeq++;
         });
+
+        // POP UP BERHASIL
+        setTimeout(() => {
+            alert(`ALHAMDULILLAH!\n\nBerhasil membuat ${total} lembar Ijazah untuk:\n${targetSch}`);
+        }, 300);
     }
 </script>
 </body>
